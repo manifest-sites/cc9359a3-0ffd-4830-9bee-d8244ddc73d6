@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { Button, Form, Input, Card, List, Typography, Space, Modal, message } from 'antd'
-import { PlusOutlined, EnvironmentOutlined, EyeOutlined } from '@ant-design/icons'
+import { PlusOutlined, EnvironmentOutlined, EyeOutlined, EditOutlined } from '@ant-design/icons'
 import { Squirrel } from '../entities/Squirrel'
 
 const { Title, Text } = Typography
@@ -11,6 +11,8 @@ function SquirrelApp() {
   const [loading, setLoading] = useState(false)
   const [form] = Form.useForm()
   const [isModalVisible, setIsModalVisible] = useState(false)
+  const [editingSquirrel, setEditingSquirrel] = useState(null)
+  const [isEditModalVisible, setIsEditModalVisible] = useState(false)
 
   useEffect(() => {
     loadSquirrels()
@@ -47,6 +49,37 @@ function SquirrelApp() {
     } catch (error) {
       message.error('Failed to add squirrel')
     }
+  }
+
+  const handleEdit = (squirrel) => {
+    setEditingSquirrel(squirrel)
+    form.setFieldsValue({
+      name: squirrel.name,
+      description: squirrel.description,
+      location: squirrel.location
+    })
+    setIsEditModalVisible(true)
+  }
+
+  const onEditFinish = async (values) => {
+    try {
+      const response = await Squirrel.update(editingSquirrel._id, values)
+      if (response.success) {
+        message.success('Squirrel updated successfully!')
+        form.resetFields()
+        setIsEditModalVisible(false)
+        setEditingSquirrel(null)
+        loadSquirrels()
+      }
+    } catch (error) {
+      message.error('Failed to update squirrel')
+    }
+  }
+
+  const handleCancelEdit = () => {
+    setIsEditModalVisible(false)
+    setEditingSquirrel(null)
+    form.resetFields()
   }
 
   return (
@@ -126,6 +159,59 @@ function SquirrelApp() {
           </Form>
         </Modal>
 
+        <Modal
+          title="Edit Squirrel"
+          open={isEditModalVisible}
+          onCancel={handleCancelEdit}
+          footer={null}
+          width={600}
+        >
+          <Form
+            form={form}
+            layout="vertical"
+            onFinish={onEditFinish}
+            className="mt-4"
+          >
+            <Form.Item
+              name="name"
+              label="Squirrel Name"
+              rules={[{ required: true, message: 'Please enter a name for the squirrel!' }]}
+            >
+              <Input placeholder="e.g., Nutkin, Fluffy Tail, etc." size="large" />
+            </Form.Item>
+
+            <Form.Item
+              name="description"
+              label="Description"
+              rules={[{ required: true, message: 'Please describe the squirrel!' }]}
+            >
+              <TextArea
+                rows={4}
+                placeholder="Describe the squirrel's appearance, behavior, or any distinguishing features..."
+              />
+            </Form.Item>
+
+            <Form.Item
+              name="location"
+              label="Location Spotted"
+              rules={[{ required: true, message: 'Please enter where you saw the squirrel!' }]}
+            >
+              <Input placeholder="e.g., Oak tree by the park bench, backyard feeder, etc." size="large" />
+            </Form.Item>
+
+            <Form.Item className="mb-0">
+              <Space className="w-full justify-end">
+                <Button onClick={handleCancelEdit}>
+                  Cancel
+                </Button>
+                <Button type="primary" htmlType="submit" className="bg-green-600 border-green-600">
+                  Update Squirrel
+                </Button>
+              </Space>
+            </Form.Item>
+          </Form>
+        </Modal>
+
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {squirrels.map((squirrel) => (
             <Card
@@ -162,6 +248,17 @@ function SquirrelApp() {
                     </Text>
                   </div>
                 )}
+
+                <div className="pt-3 border-t border-gray-100">
+                  <Button
+                    type="default"
+                    icon={<EditOutlined />}
+                    onClick={() => handleEdit(squirrel)}
+                    className="w-full"
+                  >
+                    Edit Squirrel
+                  </Button>
+                </div>
               </div>
             </Card>
           ))}
