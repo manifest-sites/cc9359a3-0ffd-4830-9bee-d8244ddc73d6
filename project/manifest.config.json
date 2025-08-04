@@ -1,5 +1,6 @@
 {
     "monetization": {
-        "type": "open"
+        "type": "subscription_required",
+        "label": "This app requires a subscription payment to use"
     }
 }
