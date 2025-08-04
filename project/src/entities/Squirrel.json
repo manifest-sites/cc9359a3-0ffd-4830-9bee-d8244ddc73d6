@@ -1,0 +1,31 @@
+{
+  "name": "Squirrel",
+  "type": "object",
+  "properties": {
+    "id": {
+      "type": "number",
+      "description": "Unique identifier for the squirrel"
+    },
+    "name": {
+      "type": "string",
+      "description": "Name of the squirrel"
+    },
+    "description": {
+      "type": "string",
+      "description": "Description of the squirrel's appearance or behavior"
+    },
+    "location": {
+      "type": "string",
+      "description": "Where the squirrel was spotted"
+    },
+    "dateSpotted": {
+      "type": "string",
+      "description": "Date when the squirrel was first spotted"
+    }
+  },
+  "required": [
+    "name",
+    "description",
+    "location"
+  ]
+}
