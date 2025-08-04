@@ -1,6 +1,6 @@
 {
     "monetization": {
-        "type": "subscription_required",
-        "label": "This app requires a subscription payment to use"
+        "type": "payment_required",
+        "label": "This app requires a one-time payment to use"
     }
 }
